@@ -68,36 +68,6 @@ class NotificationUtil {
             return nBuilder
         }
 
-        private fun <T> getPendingIntentWithStack(context: Context, javaclass: Class<T>)
-                : PendingIntent {
-            val resultIntent = Intent(context, javaclass)
-            resultIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or
-                    Intent.FLAG_ACTIVITY_SINGLE_TOP // Bitwise or (Java | )
-
-            val stackBuilder = TaskStackBuilder.create(context)
-            stackBuilder.addParentStack(javaClass)
-            stackBuilder.addNextIntent(resultIntent)
-
-            return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
-        }
-
-        @TargetApi(26)
-        private fun NotificationManager.createNotificationChannel(
-            channelID: String,
-            channelName: String,
-            playSound: Boolean
-        ) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val channelImportance = if (playSound) NotificationManager.IMPORTANCE_DEFAULT
-                else NotificationManager.IMPORTANCE_LOW
-                val nChannel = NotificationChannel(channelID, channelName, channelImportance)
-                nChannel.enableLights(true)
-                nChannel.lightColor = Color.BLUE
-
-                this.createNotificationChannel(nChannel)
-            }
-        }
-
         fun showTimerRunning(context: Context, wakeUpTime: Long) {
             val stopIntent =
                 Intent(context, TimerNotificationActionReceiver::class.java)
@@ -169,6 +139,34 @@ class NotificationUtil {
 
         }
 
+        private fun <T> getPendingIntentWithStack(context: Context, javaclass: Class<T>)
+                : PendingIntent {
+            val resultIntent = Intent(context, javaclass)
+            resultIntent.flags =
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
 
+            val stackBuilder = TaskStackBuilder.create(context)
+            stackBuilder.addParentStack(javaclass)
+            stackBuilder.addNextIntent(resultIntent)
+
+            return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
+        @TargetApi(26)
+        private fun NotificationManager.createNotificationChannel(
+            channelID: String,
+            channelName: String,
+            playSound: Boolean
+        ) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channelImportance = if (playSound) NotificationManager.IMPORTANCE_DEFAULT
+                else NotificationManager.IMPORTANCE_LOW
+                val nChannel = NotificationChannel(channelID, channelName, channelImportance)
+                nChannel.enableLights(true)
+                nChannel.lightColor = Color.BLUE
+
+                this.createNotificationChannel(nChannel)
+            }
+        }
     }
 }

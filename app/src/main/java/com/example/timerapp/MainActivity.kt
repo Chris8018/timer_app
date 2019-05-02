@@ -77,11 +77,6 @@ class MainActivity : AppCompatActivity() {
             timer.cancel()
             onTimerFinished()
         }
-
-//        fab_stop.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null).show()
-//        }
     }
 
     override fun onResume() {
@@ -167,7 +162,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setNewTimerLength() {
         val lengthInMinutes = PrefUtil.getTimerLength(this)
-        timerLengthSeconds = lengthInMinutes * 60L
+        timerLengthSeconds = (lengthInMinutes * 60L)
         progress_countdown.max = timerLengthSeconds.toInt()
     }
 
