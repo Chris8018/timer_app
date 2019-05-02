@@ -11,7 +11,6 @@ import android.graphics.Color
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.timerapp.AppConstants
 import com.example.timerapp.MainActivity

@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
+import com.example.timerapp.util.NotificationUtil
 import com.example.timerapp.util.PrefUtil
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -90,7 +91,7 @@ class MainActivity : AppCompatActivity() {
 
         removeAlarm(this)
 
-        // TODO: hide notification
+        NotificationUtil.hideTimerNotification(this)
     }
 
     override fun onPause() {
@@ -100,9 +101,10 @@ class MainActivity : AppCompatActivity() {
             timer.cancel()
 
             val wakeUpTime = setAlarm(this, nowSeconds, secondsRemaining)
-            // TODO: start background timer and show notification
+
+            NotificationUtil.showTimerRunning(this, wakeUpTime)
         } else if (timerState == TimerState.Paused) {
-            // TODO: show notification
+            NotificationUtil.showTimerPaused(this)
         }
 
         PrefUtil.setPreviousTimerLengthSeconds(timerLengthSeconds, this)
