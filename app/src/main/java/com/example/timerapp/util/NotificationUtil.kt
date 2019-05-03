@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.timerapp.AppConstants
 import com.example.timerapp.MainActivity
@@ -21,6 +22,8 @@ import java.util.*
 
 class NotificationUtil {
     companion object {
+        const val TAG = "NotificationUtil"
+
         private const val CHANNEL_ID_TIMER = "menu_timer"
         private const val CHANNEL_NAME_TIMER = "Timer App Timer"
         private const val TIMER_ID = 0
@@ -62,13 +65,16 @@ class NotificationUtil {
                 .setSmallIcon(R.drawable.ic_timer_black_24dp)
                 .setAutoCancel(true)
                 .setDefaults(0)
+//                .setUsesChronometer(true)
 
             if (playSound) nBuilder.setSound(notificationSound)
 
             return nBuilder
         }
 
-        fun showTimerRunning(context: Context, wakeUpTime: Long) {
+        fun showTimerRunning(context: Context, secondsRemaining/*wakeUpTime*/: Long) {
+            Log.d(TAG, "showTimerRunning")
+            Log.d(TAG, "" + secondsRemaining)
             val stopIntent =
                 Intent(context, TimerNotificationActionReceiver::class.java)
             stopIntent.action = AppConstants.ACTION_STOP
@@ -93,17 +99,23 @@ class NotificationUtil {
                 getBasicNotificationBuilder(context, CHANNEL_ID_TIMER, true)
 
             nBuilder.setContentTitle("Timer Running")
-                .setContentText("End: ${df.format(Date(wakeUpTime))}")
+//                .setContentText("End: ${df.format(Date(wakeUpTime))}")
+                .setContentText("Time left: $secondsRemaining")
                 .setContentIntent(getPendingIntentWithStack(context, MainActivity::class.java))
+//                .setOnlyAlertOnce(true)
                 .setOngoing(true)
                 .addAction(R.drawable.ic_stop_black_24dp, "Stop", stopPendingIntent)
                 .addAction(R.drawable.ic_pause_black_24dp, "Pause", pausePendingIntent)
+//                .setUsesChronometer(true)
 
             val nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             nManager.createNotificationChannel(CHANNEL_ID_TIMER, CHANNEL_NAME_TIMER, true)
 
-            nManager.notify(TIMER_ID, nBuilder.build())
+            val notification = nBuilder.build()
+            notification.flags = NotificationCompat.FLAG_ONGOING_EVENT
+
+            nManager.notify(TIMER_ID, notification)
         }
 
         fun showTimerPaused(context: Context) {
@@ -138,6 +150,12 @@ class NotificationUtil {
             nManager.cancel(TIMER_ID)
 
         }
+
+//        fun updateTimerNotification(context: Context) {
+//            val nManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//
+//            nManager.notify(TIMER_ID)
+//        }
 
         private fun <T> getPendingIntentWithStack(context: Context, javaclass: Class<T>)
                 : PendingIntent {

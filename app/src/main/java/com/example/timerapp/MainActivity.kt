@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
@@ -19,8 +20,15 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+
+
     companion object {
+        const val TAG = "MainActivity"
+
         fun setAlarm(context: Context, nowSeconds: Long, secondsRemaining: Long): Long {
+
+            Log.d(TAG, "setAlarm")
+            Log.d(TAG, "" + secondsRemaining)
             val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val intent = Intent(context, TimerExpiredReceiver::class.java)
@@ -97,7 +105,8 @@ class MainActivity : AppCompatActivity() {
 
             val wakeUpTime = setAlarm(this, nowSeconds, secondsRemaining)
 
-            NotificationUtil.showTimerRunning(this, wakeUpTime)
+//            NotificationUtil.showTimerRunning(this, wakeUpTime)
+            NotificationUtil.showTimerRunning(this, secondsRemaining)
         } else if (timerState == TimerState.Paused) {
             NotificationUtil.showTimerPaused(this)
         }
